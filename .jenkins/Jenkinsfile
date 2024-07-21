@@ -38,9 +38,11 @@ pipeline {
                 """
                 }
             }
+            // uncomment the following block to enable JUnit test reporting additional configuration needed
             // post {
-            //     always {
-            //         junit '**/test-*.xml'
+            //     success {
+            //         junit checksName: 'Tests', testResults: '**/test-*.xml'
+            //         archiveArtifacts 'target/*.jar'
             //     }
             // }
         }
