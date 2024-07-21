@@ -1,0 +1,43 @@
+# The main job for cicd_w_dabs_ga_jk_demo.
+resources:
+  jobs:
+    cicd_w_dabs_ga_jk_demo_job:
+      name: cicd_w_dabs_ga_jk_demo_job
+
+      schedule:
+        # Run every day at 8:37 AM
+        quartz_cron_expression: "44 37 8 * * ?"
+        timezone_id: Europe/Amsterdam
+
+      email_notifications:
+        on_failure:
+          - andres.garcia@databricks.com
+
+      tasks:
+        - task_key: notebook_task
+          #job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/notebook.ipynb
+
+        - task_key: refresh_pipeline
+          depends_on:
+            - task_key: notebook_task
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.cicd_w_dabs_ga_jk_demo_pipeline.id}
+
+        - task_key: main_task
+          depends_on:
+              - task_key: refresh_pipeline
+          python_wheel_task:
+            package_name: cicd_w_dabs_ga_jk_demo
+            entry_point: main
+          environment_key: GA_JK_Python_Wheel
+
+      queue:
+        enabled: true
+      environments:
+        - environment_key: GA_JK_Python_Wheel
+          spec:
+            client: "1"
+            dependencies:
+              - ../dist/*.whl

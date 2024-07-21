@@ -1,0 +1,14 @@
+# The main pipeline for cicd_w_dabs_ga_jk_demo
+resources:
+  pipelines:
+    cicd_w_dabs_ga_jk_demo_pipeline:
+      name: cicd_w_dabs_ga_jk_demo_pipeline
+      serverless: true
+      catalog: cicd_demos
+      target: ga_jk_dlt_pipeline
+      libraries:
+        - notebook:
+            path: ../src/dlt_pipeline.ipynb
+
+      configuration:
+        bundle.sourcePath: /Workspace/${workspace.file_path}/src
